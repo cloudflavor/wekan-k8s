@@ -15,30 +15,41 @@ metadata:
     app: wekan
 spec:
   ports:
-  - port: 80
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
   selector:
     app: wekan
-    tier: backend
-  type: NodePort
 ---
-apiVersion: apps/v1beta
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: wekandb
+  name: wekan
+  namespace: wekan-project
   labels:
     app: wekan
 spec:
+  replicas: 1
   strategy:
     type: Recreate
+  selector:
+    matchLabels:
+      app: wekan
   template:
     metadata:
       labels:
         app: wekan
-        tier: backend
     spec:
       containers:
-      - image: mongodb:3.2.15
-        name: mongodb
+      - image: quay.io/wekan/wekan:v1.78
+        name: wekan
         ports:
-        - containerPort: 27017
-          name: wekandb
+        - containerPort: 8080
+          name: wekan
+        env:
+        - name: MONGO_URL
+          value: mongodb://wekan:pass@mongodb:27017/wekan
+        - name: PORT
+          value: "8080"
+        - name: ROOT_URL
+          value: http://my.domain.com

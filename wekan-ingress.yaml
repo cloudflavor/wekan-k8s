@@ -1,0 +1,14 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: wekan-ingress
+spec:
+  rules:
+  - host: my.domain.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: wekan
+          servicePort: 8080
